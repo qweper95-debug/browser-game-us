@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anime Browser RPG — Game Overview & Gameplay Guide</title>
+  <meta name="description" content="An independent overview of an anime-style browser RPG (HTML5). Learn about gameplay, features, and how to start playing on mobile—no downloads required." />
+
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#141a33;
+      --card:rgba(255,255,255,.92);
+      --muted:#5b647a;
+      --text:#0f172a;
+      --shadow: 0 16px 40px rgba(0,0,0,.18);
+      --radius: 18px;
+      --accent:#7c3aed;  /* purple */
+      --accent2:#a855f7;
+      --border: rgba(15, 23, 42, .10);
+      --max: 1100px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 600px at 85% 15%, rgba(168,85,247,.25), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    /* soft blurred “room” feel */
+    .bg-blur{
+      position:fixed; inset:-120px;
+      background:
+        radial-gradient(700px 450px at 20% 65%, rgba(255,255,255,.10), transparent 60%),
+        radial-gradient(520px 360px at 75% 55%, rgba(255,255,255,.08), transparent 65%),
+        radial-gradient(520px 360px at 55% 25%, rgba(255,255,255,.06), transparent 60%);
+      filter: blur(12px);
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    .container{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color: rgba(255,255,255,.85);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 8px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(124,58,237,.18);
+    }
+
+    .hero{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.35);
+      overflow:hidden;
+    }
+
+    .hero-inner{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 0;
+    }
+
+    .hero-left{
+      padding: 28px 26px 22px;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(24px, 2.2vw, 36px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin:0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin: 14px 0 18px;
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: #1f2a44;
+      background: rgba(124,58,237,.06);
+      font-size: 13px;
+    }
+
+    .cta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      margin-top: 14px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      text-decoration:none;
+      color:#fff;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 12px 24px rgba(124,58,237,.28);
+      border: 1px solid rgba(255,255,255,.18);
+      transition: transform .15s ease, filter .15s ease;
+      min-width: 220px;
+    }
+    .btn:hover{transform: translateY(-1px); filter: brightness(1.03);}
+    .btn:active{transform: translateY(0);}
+
+    .btn-secondary{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration:none;
+      color:#1f2a44;
+      font-weight: 650;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    .disclosure{
+      margin: 10px 0 0;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .hero-right{
+      position:relative;
+      padding: 20px;
+      background:
+        radial-gradient(700px 420px at 25% 25%, rgba(124,58,237,.22), transparent 55%),
+        radial-gradient(700px 420px at 85% 65%, rgba(168,85,247,.18), transparent 55%),
+        linear-gradient(180deg, rgba(15,23,42,.03), rgba(15,23,42,.06));
+      border-left: 1px solid rgba(15,23,42,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* simple inline “cover” (no external images) */
+    .cover{
+      width:100%;
+      max-width: 420px;
+      aspect-ratio: 4/3;
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,.10);
+      background:
+        radial-gradient(180px 140px at 30% 35%, rgba(255,255,255,.65), transparent 60%),
+        radial-gradient(220px 160px at 70% 65%, rgba(255,255,255,.35), transparent 62%),
+        linear-gradient(135deg, rgba(124,58,237,.75), rgba(168,85,247,.65));
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .cover::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.18), transparent 40%),
+        radial-gradient(420px 250px at 60% 0%, rgba(255,255,255,.20), transparent 65%);
+      mix-blend-mode: overlay;
+    }
+    .cover-inner{
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      justify-content:flex-end;
+      padding: 18px;
+      color:#fff;
+    }
+    .cover-title{
+      font-weight:800;
+      font-size: 16px;
+      letter-spacing:.2px;
+      margin:0 0 6px;
+      text-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    .cover-small{
+      margin:0;
+      font-size: 12px;
+      opacity: .92;
+    }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+    }
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 26px rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.35);
+      padding: 18px 18px 14px;
+    }
+    h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+    p{margin: 0 0 12px; color:#1f2a44; line-height:1.6; font-size: 14px;}
+    ul{margin: 0; padding-left: 18px; color:#1f2a44; line-height:1.75; font-size:14px;}
+    li{margin: 6px 0;}
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .mini{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,.65);
+    }
+    .mini b{display:block; margin-bottom:6px}
+
+    .faq details{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.65);
+      margin: 10px 0;
+    }
+    .faq summary{
+      cursor:pointer;
+      font-weight: 700;
+      color:#1f2a44;
+    }
+    .faq .a{margin-top:10px; color:#1f2a44; font-size: 14px; line-height:1.6;}
+
+    footer{
+      margin-top: 18px;
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    footer a{
+      color: rgba(255,255,255,.88);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .footlinks{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px){
+      .hero-inner{grid-template-columns: 1fr;}
+      .hero-right{border-left:none; border-top: 1px solid rgba(15,23,42,.08);}
+      .grid{grid-template-columns: 1fr;}
+      .two{grid-template-columns: 1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-blur" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="topbar">
+      <div class="badge"><span class="dot"></span> Independent game overview</div>
+      <div>Updated: <span id="d"></span></div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <h1>Anime Browser RPG — Game Overview & Gameplay Guide</h1>
+          <p class="sub">
+            Looking for a fast browser RPG you can play on your phone without downloading anything?
+            Here’s a quick, independent overview of an anime-style HTML5 RPG with team-building,
+            character collection, and story progression.
+          </p>
+
+          <div class="meta">
+            <span class="pill">✅ No download</span>
+            <span class="pill">📱 Mobile friendly</span>
+            <span class="pill">⚔️ RPG progression</span>
+            <span class="pill">🎴 Collect characters</span>
+          </div>
+
+          <div class="cta-row">
+            <!-- Replace link if needed -->
+            <a class="btn" href="https://top-deal.me/a/KrAmkU49ZGU39jN" target="_blank" rel="noopener noreferrer">
+              ▶ Play the Game Now
+            </a>
+            <a class="btn-secondary" href="#features">See features</a>
+          </div>
+
+          <p class="disclosure">
+            Disclosure: This page is an independent overview and may contain an external tracking/affiliate link.
+          </p>
+        </div>
+
+        <div class="hero-right">
+          <div class="cover" role="img" aria-label="Anime browser RPG cover artwork placeholder">
+            <div class="cover-inner">
+              <p class="cover-title">HTML5 Anime RPG</p>
+              <p class="cover-small">Browser gameplay • Mobile optimized • No installation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="features">
+        <h2>Game overview</h2>
+        <p>
+          This is a browser-based RPG built with HTML5, designed for quick sessions and smooth mobile performance.
+          You build a team, progress through stages, and unlock upgrades over time.
+        </p>
+
+        <h2>Main features</h2>
+        <ul>
+          <li>Play directly in your mobile browser (HTML5)</li>
+          <li>Team-building and progression mechanics</li>
+          <li>Collectible characters and upgrade paths</li>
+          <li>Fast loading and simple onboarding</li>
+          <li>Works on most modern devices</li>
+        </ul>
+
+        <div class="two">
+          <div class="mini">
+            <b>Best for</b>
+            Anime RPG fans, players who prefer browser games, and mobile users who don’t want downloads.
+          </div>
+          <div class="mini">
+            <b>Good to know</b>
+            Performance depends on your device and browser. Using Wi-Fi may improve loading speed.
+          </div>
+        </div>
+      </section>
+
+      <aside class="card faq">
+        <h2>Quick FAQ</h2>
+
+        <details open>
+          <summary>Do I need to download anything?</summary>
+          <div class="a">No — it’s designed to run in your browser (HTML5) on mobile devices.</div>
+        </details>
+
+        <details>
+          <summary>Is it playable on different devices?</summary>
+          <div class="a">Yes, it’s optimized for mobile. Results may vary by browser and phone model.</div>
+        </details>
+
+        <details>
+          <summary>Is this an official website?</summary>
+          <div class="a">No — this is an independent overview page for informational purposes.</div>
+        </details>
+
+        <details>
+          <summary>How do I start playing?</summary>
+          <div class="a">Tap the “Play the Game Now” button above to open the official game page.</div>
+        </details>
+
+        <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+          <a class="btn" style="width:100%; min-width:unset;" href="https://top-deal.me/a/KrAmkU49ZGU39jN" target="_blank" rel="noopener noreferrer">
+            ▶ Start on Mobile
+          </a>
+          <p class="disclosure" style="margin-top:10px;">
+            External link. We don’t own or operate the game.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <div>
+        Disclaimer: This website provides an independent overview of an online browser game. We do not own,
+        operate, or represent the game. All trademarks and brand names belong to their respective owners.
+      </div>
+      <div class="footlinks">
+        <!-- You can create these pages later, or keep as placeholders -->
+        <a href="#privacy" onclick="alert('Create a privacy page when possible.'); return false;">Privacy Policy</a>
+        <a href="#terms" onclick="alert('Create a terms page when possible.'); return false;">Terms</a>
+        <a href="#contact" onclick="alert('Add a contact email/page when possible.'); return false;">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // show today's date for freshness
+    const d = new Date();
+    document.getElementById('d').textContent =
+      d.toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'});
+  </script>
+</body>
+</html>
